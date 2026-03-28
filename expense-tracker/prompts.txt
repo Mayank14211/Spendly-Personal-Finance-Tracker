@@ -37,7 +37,7 @@ Data Storage, Third Party Services, and Contact Us.
 Match the style of terms.html.
 3. In templates/landing.html, update the "Privacy Policy"
 footer link href from "#" to "/privacy".
-4. Make sure to test that both links in the footer now correctly navigate to their respective pages also the appearance looks constant with app's interface theme.
+4. Make sure to test that both links in the footer now correctly navigate to their respective pages also the appearance looks constant with app's interface.
 
 git commit -m "landing: add privacy policy page and route”
 -----------------------------------------------------------------------------
@@ -52,8 +52,8 @@ Changes to implement:
 - Headline: large two-line text, first line dark ("Track every rupee."),
 second line teal ("Know where it goes.")
 - Subtext: muted gray, two lines, centered
-- Two CTA buttons: both solid black with white text, rounded corners
-- App preview frame: light warm-gray background, rounded corners,
+- Demo CTA buttons: Replce sigin btn to "Track every rupee" solid black with white text, rounded corners
+- App preview frame(replace): light warm-gray background, rounded corners,
 traffic light dots in top-left, 3 stat cards in a row,
 category bar chart below
 

@@ -99,4 +99,56 @@
     </div>
 </section>
 
+<!-- Video Modal -->
+<div id="video-modal" class="video-modal" aria-hidden="true">
+    <div class="video-modal-overlay"></div>
+    <div class="video-modal-content">
+        <button class="video-modal-close" aria-label="Close modal">&times;</button>
+        <div class="video-container">
+            <iframe id="video-frame" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    const modal = document.getElementById('video-modal');
+    const trigger = document.querySelector('.btn-secondary');
+    const closeBtn = modal.querySelector('.video-modal-close');
+    const overlay = modal.querySelector('.video-modal-overlay');
+    const videoFrame = document.getElementById('video-frame');
+    const videoUrl = 'https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1';
+
+    function openModal() {
+        modal.setAttribute('aria-hidden', 'false');
+        modal.classList.add('is-open');
+        videoFrame.src = videoUrl;
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+        modal.setAttribute('aria-hidden', 'true');
+        modal.classList.remove('is-open');
+        videoFrame.src = '';
+        document.body.style.overflow = '';
+    }
+
+    if (trigger) {
+        trigger.addEventListener('click', function(e) {
+            e.preventDefault();
+            openModal();
+        });
+    }
+
+    closeBtn.addEventListener('click', closeModal);
+    overlay.addEventListener('click', closeModal);
+
+    modal.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeModal();
+        }
+    });
+})();
+</script>
+
 {% endblock %}

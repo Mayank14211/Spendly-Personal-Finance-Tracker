@@ -2,7 +2,7 @@ import sqlite3
 from pathlib import Path
 from werkzeug.security import generate_password_hash
 
-DB_PATH = Path(__file__).parent.parent / "spendly.db"
+DB_PATH = Path(__file__).parent.parent.parent / "spendly.db"
 
 
 def get_db():
@@ -50,6 +50,16 @@ def get_user_by_email(email):
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM users WHERE email = ?", (email,))
+    user = cursor.fetchone()
+    conn.close()
+    return user
+
+
+def get_user_by_id(user_id):
+    """Fetch a user by ID. Returns None if not found."""
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM users WHERE id = ?", (user_id,))
     user = cursor.fetchone()
     conn.close()
     return user

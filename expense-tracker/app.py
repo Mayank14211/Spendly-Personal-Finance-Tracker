@@ -1,8 +1,20 @@
-from flask import Flask, render_template, request, redirect, url_for
-from database.db import init_db, seed_db, get_user_by_email, create_user
-from werkzeug.security import generate_password_hash
+from flask import Flask, render_template, request, redirect, url_for, session
+from database.db import init_db, seed_db, get_user_by_email, get_user_by_id, create_user
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
+app.config["SECRET_KEY"] = "spendly-dev-secret-key-change-in-production"
+
+
+@app.context_processor
+def inject_user():
+    """Make user info available to all templates when logged in."""
+    if session.get("user_id"):
+        user = get_user_by_id(session["user_id"])
+        if user:
+            return {"user_name": user["name"], "user_email": user["email"]}
+    return {}
+
 
 with app.app_context():
     init_db()
@@ -48,8 +60,32 @@ def register():
     return render_template("register.html")
 
 
-@app.route("/login")
+@app.route("/login", methods=["GET", "POST"])
 def login():
+    if request.method == "POST":
+        # Extract form data
+        email = request.form.get("email", "").strip()
+        password = request.form.get("password", "")
+
+        # Validate input
+        if not email or not password:
+            return render_template("login.html", error="Email and password are required")
+
+        # Look up user by email
+        user = get_user_by_email(email)
+        if not user:
+            return render_template("login.html", error="Invalid email or password")
+
+        # Verify password
+        if not check_password_hash(user["password_hash"], password):
+            return render_template("login.html", error="Invalid email or password")
+
+        # Store user ID in session
+        session["user_id"] = user["id"]
+
+        # Redirect to landing page (dashboard)
+        return redirect(url_for("landing"))
+
     return render_template("login.html")
 
 
@@ -69,7 +105,9 @@ def privacy():
 
 @app.route("/logout")
 def logout():
-    return "Logout — coming in Step 3"
+    """Clear session and redirect to landing page."""
+    session.pop("user_id", None)
+    return redirect(url_for("landing"))
 
 
 @app.route("/profile")

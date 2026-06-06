@@ -27,6 +27,8 @@ with app.app_context():
 
 @app.route("/")
 def landing():
+    if session.get("user_id"):
+        return redirect(url_for("profile"))
     return render_template("landing.html")
 
 
@@ -62,6 +64,9 @@ def register():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    if session.get("user_id"):
+        return redirect(url_for("profile"))
+
     if request.method == "POST":
         # Extract form data
         email = request.form.get("email", "").strip()
@@ -83,8 +88,8 @@ def login():
         # Store user ID in session
         session["user_id"] = user["id"]
 
-        # Redirect to landing page (dashboard)
-        return redirect(url_for("landing"))
+        # Redirect to profile page
+        return redirect(url_for("profile"))
 
     return render_template("login.html")
 
@@ -112,7 +117,16 @@ def logout():
 
 @app.route("/profile")
 def profile():
-    return "Profile page — coming in Step 4"
+    """Display user profile page."""
+    user_id = session.get("user_id")
+    if not user_id:
+        return redirect(url_for("login"))
+
+    user = get_user_by_id(user_id)
+    if not user:
+        return redirect(url_for("login"))
+
+    return render_template("profile.html", user=user)
 
 
 @app.route("/expenses/add")
